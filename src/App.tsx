@@ -1,26 +1,34 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import firebase from "firebase/app";
+import "firebase/auth";
+import "firebase/database";
+import "firebase/firestore"; // make sure you add this for firestore
+import React from "react";
+import { Provider } from "react-redux";
+import { ReactReduxFirebaseProvider } from "react-redux-firebase";
+import {
+  firebase as fbConfig,
+  reduxFirebase as rfConfig,
+} from "./firebase/firebase";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+import store from "./store";
 
-export default App;
+import Home from "./pages/Home";
+import { createFirestoreInstance } from "redux-firestore";
+
+// Initialize Firebase instance
+firebase.initializeApp(fbConfig);
+
+firebase.firestore();
+
+export default () => (
+  <Provider store={store}>
+    <ReactReduxFirebaseProvider
+      firebase={firebase}
+      config={rfConfig}
+      dispatch={store.dispatch}
+      createFirestoreInstance={createFirestoreInstance}
+    >
+      <Home />
+    </ReactReduxFirebaseProvider>
+  </Provider>
+);
