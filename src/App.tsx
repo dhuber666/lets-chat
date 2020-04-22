@@ -9,11 +9,14 @@ import {
   firebase as fbConfig,
   reduxFirebase as rfConfig,
 } from "./firebase/firebase";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
 import store from "./store";
 
 import Home from "./pages/Home";
 import { createFirestoreInstance } from "redux-firestore";
+import Signup from "./pages/Signup";
+import Navbar from "./components/Navbar";
 
 // Initialize Firebase instance
 firebase.initializeApp(fbConfig);
@@ -28,7 +31,19 @@ export default () => (
       dispatch={store.dispatch}
       createFirestoreInstance={createFirestoreInstance}
     >
-      <Home />
+      <Router>
+        <div>
+          <Navbar />
+          <Switch>
+            <Route exact path="/">
+              <Home />
+            </Route>
+            <Route exact path="/signup">
+              <Signup />
+            </Route>
+          </Switch>
+        </div>
+      </Router>
     </ReactReduxFirebaseProvider>
   </Provider>
 );
