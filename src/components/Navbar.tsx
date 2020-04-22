@@ -4,11 +4,12 @@ import AppBar from "@material-ui/core/AppBar";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
-import { Button, IconButton, Slide } from "@material-ui/core";
-import useScrollTrigger from "@material-ui/core/useScrollTrigger";
+import { IconButton } from "@material-ui/core";
 import HomeIcon from "@material-ui/icons/Home";
-import AccountCircle from "@material-ui/icons/AccountCircle";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { AppState } from "../reducers";
+import { useFirebase } from "react-redux-firebase";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -16,7 +17,7 @@ const useStyles = makeStyles((theme: Theme) =>
       flexGrow: 1,
     },
     appBar: {
-      zIndex: 10000000,
+      zIndex: 10000,
     },
     menuButton: {
       marginRight: theme.spacing(2),
@@ -27,8 +28,37 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
+const Logout = () => {
+  const firebase = useFirebase();
+
+  return (
+    <Typography
+      style={{ textDecoration: "none", color: "inherit" }}
+      component={Link}
+      to="/"
+      variant="inherit"
+      onClick={() => firebase.logout()}
+    >
+      Logout
+    </Typography>
+  );
+};
+
+const Login = () => (
+  <Typography
+    style={{ textDecoration: "none", color: "inherit" }}
+    component={Link}
+    to="/signin"
+    variant="inherit"
+  >
+    Login
+  </Typography>
+);
+
 export default function ClippedDrawer() {
   const classes = useStyles();
+
+  const auth = useSelector((state: AppState) => state.firebase.auth);
 
   return (
     <div className={classes.root}>
@@ -49,16 +79,8 @@ export default function ClippedDrawer() {
           <Typography variant="h6" className={classes.title}>
             Simple Chat
           </Typography>
-          <IconButton
-            aria-label="account of current user"
-            aria-controls="menu-appbar"
-            aria-haspopup="true"
-            color="inherit"
-            component={Link}
-            to="/signup"
-          >
-            <AccountCircle />
-          </IconButton>
+
+          {auth.isLoaded ? !auth.isEmpty ? <Logout /> : <Login /> : ""}
         </Toolbar>
       </AppBar>
     </div>
