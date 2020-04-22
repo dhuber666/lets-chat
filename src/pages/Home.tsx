@@ -22,6 +22,7 @@ import {
 } from "@material-ui/core";
 import InboxIcon from "@material-ui/icons/Inbox";
 import { useSelector } from "react-redux";
+import ChatRoomList from "../components/ChatRoomList";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -54,7 +55,7 @@ const useStyles = makeStyles((theme: Theme) =>
 function Home() {
   useFirestoreConnect("chatRooms");
   const firestore: ExtendedFirestoreInstance = useFirestore();
-  const theme = useTheme();
+
   const chatRooms = useSelector((state: AppState) => {
     return state.firestore.ordered.chatRooms;
   });
@@ -77,29 +78,7 @@ function Home() {
   return (
     <Grid container spacing={3}>
       <Grid item xs={4}>
-        <List
-          component="nav"
-          aria-label="main mailbox folders"
-          className={classes.root}
-        >
-          {chatRooms &&
-            chatRooms.map((chatRoom: ChatRoom) => {
-              return (
-                <ListItem button key={chatRoom.id}>
-                  <ListItemIcon className={classes.icon}>
-                    <InboxIcon />
-                  </ListItemIcon>
-                  <ListItemText
-                    primaryTypographyProps={{ color: "inherit" }}
-                    primary={chatRoom.title}
-                  />
-                </ListItem>
-              );
-            })}
-        </List>
-        <Button variant="text" className={classes.addBtn}>
-          Add Room
-        </Button>
+        <ChatRoomList />
       </Grid>
       <Grid item xs={8}>
         <Paper>Right Content</Paper>
