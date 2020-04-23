@@ -14,7 +14,7 @@ import { useFirebase } from "react-redux-firebase";
 import { useSelector } from "react-redux";
 import { AppState } from "../reducers";
 import { FirebaseError } from "firebase";
-import { Link as RouterLink, useHistory, Redirect } from "react-router-dom";
+import { Link as RouterLink, useHistory } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function SignIn() {
+export default function SignUp() {
   const classes = useStyles();
   const firebase = useFirebase();
   const auth = useSelector((state: AppState) => state.firebase.auth);
@@ -44,23 +44,22 @@ export default function SignIn() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const [repeatPassword, setRepeatPassword] = useState("");
   const [error, setError] = useState("");
 
-  const signin = async (e: React.MouseEvent) => {
+  const signup = async (e: React.MouseEvent) => {
     e.preventDefault();
+    if (password !== repeatPassword) {
+      console.log("password doesnt match");
+      return setError("Passwords doesn't match");
+    }
 
     const user = await firebase
-      .login({ email, password })
+      .createUser({ email, password })
+      .then((user) => history.push("/"))
       .catch((e: FirebaseError) => setError(e.message));
 
-    if (user) {
-      history.push("/");
-    }
-  };
-
-  const forgotPwd = () => {
-    firebase.resetPassword(email);
+    // create user and forward to chats
   };
 
   return (
@@ -101,7 +100,19 @@ export default function SignIn() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            name="password"
+            label="Repeat Password"
+            type="password"
+            id="password2"
+            autoComplete="current-password"
+            value={repeatPassword}
+            onChange={(e) => setRepeatPassword(e.target.value)}
+          />
           {error.length > 0 && (
             <Typography variant="caption" color="secondary">
               {error}
@@ -113,19 +124,14 @@ export default function SignIn() {
             variant="contained"
             color="primary"
             className={classes.submit}
-            onClick={signin}
+            onClick={signup}
           >
             Sign In
           </Button>
-          <Grid container>
-            <Grid item xs>
-              <Link href="#" variant="body2" onClick={forgotPwd}>
-                Forgot password?
-              </Link>
-            </Grid>
+          <Grid container justify="center">
             <Grid item>
-              <Link component={RouterLink} to="/signup" variant="body2">
-                {"Don't have an account? Sign Up"}
+              <Link component={RouterLink} to="/signin" variant="body2">
+                {"Already have an account? Sign In"}
               </Link>
             </Grid>
           </Grid>

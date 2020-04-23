@@ -15,8 +15,10 @@ import store from "./store";
 
 import Home from "./pages/Home";
 import { createFirestoreInstance } from "redux-firestore";
+import Signup from "./pages/Signup";
 import Signin from "./pages/Signin";
 import Navbar from "./components/Navbar";
+import PrivateRoute from "./pages/PrivateRoute";
 
 // Initialize Firebase instance
 firebase.initializeApp(fbConfig);
@@ -35,11 +37,14 @@ export default () => (
         <div>
           <Navbar />
           <Switch>
-            <Route exact path="/">
+            <PrivateRoute exact path="/">
               <Home />
-            </Route>
+            </PrivateRoute>
             <Route exact path="/signin">
               <Signin />
+            </Route>
+            <Route exact path="/signup">
+              <Signup />
             </Route>
           </Switch>
         </div>
