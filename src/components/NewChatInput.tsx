@@ -1,10 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useFirestore } from "react-redux-firebase";
 import { useSelector } from "react-redux";
 import { AppState, Chat } from "../reducers";
+import { useParams } from "react-router-dom";
+import { TextField } from "@material-ui/core";
 
 const NewChatInput = () => {
   const firestore = useFirestore();
+  const { chatRoomId } = useParams();
+
+  console.log("this is the id: ", chatRoomId);
 
   const profile = useSelector((state: AppState) => state.firebase.profile);
 
@@ -15,36 +20,34 @@ const NewChatInput = () => {
 
     const newChat: Chat = {
       message,
-      chatRoom: "89VzMHrNFHlXEl9uLRWT",
+      chatRoom: chatRoomId!,
       sender: profile,
       timestamp: Date.now(),
     };
 
-    firestore.add("chatRooms/89VzMHrNFHlXEl9uLRWT/chats", newChat);
+    firestore.add(`chatRooms/${chatRoomId}/chats`, newChat);
   };
 
   return (
-    <input
-      onKeyDown={(e) => (e.keyCode === 13 ? submitMessage() : null)}
-      type="text"
-      value={message}
-      onChange={(e) => setMessage(e.target.value)}
-      placeholder="Your message.."
+    <div
       style={{
-        width: "100%",
         position: "sticky",
-        bottom: 0,
-        left: 0,
-        right: 0,
-        height: 50,
-        padding: 20,
-        borderTopLeftRadius: 8,
-        borderTopRightRadius: 8,
-        boxSizing: "border-box",
-        border: "1px solid teal",
-        outline: "none",
+        bottom: 5,
       }}
-    />
+    >
+      <TextField
+        placeholder="Your Message.."
+        style={{ backgroundColor: "white" }}
+        variant="outlined"
+        fullWidth
+        label="message"
+        InputLabelProps={{ style: { backgroundColor: "white" } }}
+        color="secondary"
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+        onKeyDown={(e) => (e.keyCode === 13 ? submitMessage() : null)}
+      />
+    </div>
   );
 };
 

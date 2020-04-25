@@ -19,11 +19,25 @@ import Signup from "./pages/Signup";
 import Signin from "./pages/Signin";
 import Navbar from "./components/Navbar";
 import PrivateRoute from "./pages/PrivateRoute";
+import ChatList from "./components/ChatList";
+import ChatRoomList from "./components/ChatRoomList";
+import { Grid, Container } from "@material-ui/core";
 
 // Initialize Firebase instance
 firebase.initializeApp(fbConfig);
 
 firebase.firestore();
+
+const ListAndChat = () => (
+  <Grid container direction="row" style={{ marginTop: 100 }}>
+    <Grid item md={2}>
+      <ChatRoomList />
+    </Grid>
+    <Grid item md={10}>
+      <ChatList />
+    </Grid>
+  </Grid>
+);
 
 export default () => (
   <Provider store={store}>
@@ -34,20 +48,22 @@ export default () => (
       createFirestoreInstance={createFirestoreInstance}
     >
       <Router>
-        <div>
-          <Navbar />
-          <Switch>
-            <PrivateRoute exact path="/">
-              <Home />
-            </PrivateRoute>
-            <Route exact path="/signin">
-              <Signin />
-            </Route>
-            <Route exact path="/signup">
-              <Signup />
-            </Route>
-          </Switch>
-        </div>
+        <Navbar />
+
+        <Switch>
+          <Route exact path="/">
+            <Home />
+          </Route>
+          <PrivateRoute exact path="/chatRooms/:chatRoomId">
+            <ListAndChat />
+          </PrivateRoute>
+          <Route exact path="/signin">
+            <Signin />
+          </Route>
+          <Route exact path="/signup">
+            <Signup />
+          </Route>
+        </Switch>
       </Router>
     </ReactReduxFirebaseProvider>
   </Provider>

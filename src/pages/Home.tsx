@@ -30,7 +30,11 @@ function Home() {
     return <button onClick={addTodo}>Add Room "React"</button>;
   }
 
-  return <ChatRoomList />;
+  return (
+    <div style={{ marginTop: 100 }}>
+      <ChatRoomList />
+    </div>
+  );
 }
 
 export default Home;

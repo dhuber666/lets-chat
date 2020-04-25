@@ -16,9 +16,7 @@ const useStyles = makeStyles((theme: Theme) =>
     root: {
       flexGrow: 1,
     },
-    appBar: {
-      zIndex: 10000,
-    },
+    appBar: {},
     menuButton: {
       marginRight: theme.spacing(2),
     },
@@ -61,28 +59,24 @@ export default function ClippedDrawer() {
   const auth = useSelector((state: AppState) => state.firebase.auth);
 
   return (
-    <div className={classes.root}>
-      <CssBaseline />
+    <AppBar className={classes.appBar}>
+      <Toolbar>
+        <IconButton
+          edge="start"
+          color="inherit"
+          aria-label="menu"
+          className={classes.menuButton}
+          component={Link}
+          to="/"
+        >
+          <HomeIcon />
+        </IconButton>
+        <Typography variant="h6" className={classes.title}>
+          Simple Chat
+        </Typography>
 
-      <AppBar className={classes.appBar}>
-        <Toolbar>
-          <IconButton
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-            className={classes.menuButton}
-            component={Link}
-            to="/"
-          >
-            <HomeIcon />
-          </IconButton>
-          <Typography variant="h6" className={classes.title}>
-            Simple Chat
-          </Typography>
-
-          {auth.isLoaded ? !auth.isEmpty ? <Logout /> : <Login /> : ""}
-        </Toolbar>
-      </AppBar>
-    </div>
+        {auth.isLoaded ? !auth.isEmpty ? <Logout /> : <Login /> : ""}
+      </Toolbar>
+    </AppBar>
   );
 }

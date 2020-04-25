@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useEffect } from "react";
 
 import { createStyles, Theme, makeStyles } from "@material-ui/core/styles";
 import List from "@material-ui/core/List";
@@ -13,6 +13,9 @@ import NewChatInput from "./NewChatInput";
 import { useFirestoreConnect, isLoaded, isEmpty } from "react-redux-firebase";
 import { useSelector } from "react-redux";
 import { AppState, Chat } from "../reducers";
+import { useParams } from "react-router-dom";
+
+// theme.palette.background.paper,
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -20,17 +23,12 @@ const useStyles = makeStyles((theme: Theme) =>
       flexGrow: 1,
       width: "100%",
       maxWidth: "100%",
-      backgroundColor: theme.palette.background.paper,
+      minHeight: "100%",
+      backgroundColor: "teal",
+      overflow: "auto",
     },
     inline: {
       display: "inline",
-    },
-    chatlist: {
-      overflow: "auto",
-    },
-
-    input: {
-      position: "sticky",
     },
   })
 );
@@ -64,10 +62,13 @@ const renderChat = (classes: Record<"inline" | "root", string>) => (
 
 export default function ChatList() {
   const classes = useStyles();
+  const { chatRoomId } = useParams();
+
+  const chatRef = useRef<HTMLDivElement>(null);
 
   // @ts-ignore
   useFirestoreConnect({
-    collection: "chatRooms/89VzMHrNFHlXEl9uLRWT/chats",
+    collection: `chatRooms/${chatRoomId}/chats`,
     storeAs: "chats",
     orderBy: "timestamp",
   });
@@ -76,11 +77,30 @@ export default function ChatList() {
 
   console.log(chats);
 
+  useEffect(() => {
+    chatRef.current?.scrollIntoView();
+  });
+
+  if (isLoaded && isEmpty(chats)) {
+    return (
+      <div>
+        <p>No chats yet!</p>
+        <NewChatInput />
+      </div>
+    );
+  }
+
   return (
-    <div className={classes.root}>
-      <Toolbar />
-      <List className={classes.chatlist}>
-        {isLoaded && !isEmpty(chats) ? (
+    <div
+      style={{
+        height: "100%",
+
+        width: "100%",
+        scrollBehavior: "smooth",
+      }}
+    >
+      <List>
+        {isLoaded ? (
           chats.map((chat: Chat) => (
             <p key={chat.id}>
               {chat.message} - {chat.sender.email}
@@ -90,6 +110,8 @@ export default function ChatList() {
           <CircularProgress />
         )}
       </List>
+      <div ref={chatRef} />
+
       <NewChatInput />
     </div>
   );

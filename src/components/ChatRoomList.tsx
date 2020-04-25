@@ -9,63 +9,61 @@ import ListItemText from "@material-ui/core/ListItemText";
 import { FaReact } from "react-icons/fa";
 import { DiApple } from "react-icons/di";
 
-import { Icon } from "@material-ui/core";
-import ChatList from "./ChatList";
+import { Icon, CircularProgress } from "@material-ui/core";
+import { useHistory } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { AppState, ChatRoom } from "../reducers";
+import { isEmpty, isLoaded } from "react-redux-firebase";
 
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      display: "flex",
-    },
-    appBar: {
-      zIndex: theme.zIndex.drawer + 1,
-    },
-    drawer: {
       width: drawerWidth,
-      flexShrink: 0,
-    },
-    drawerPaper: {
-      width: drawerWidth,
-    },
-    drawerContainer: {
-      overflow: "auto",
-    },
-    content: {
-      flexGrow: 1,
-      padding: theme.spacing(3),
+      left: 0,
+      top: 0,
+      backgroundColor: "teal",
     },
   })
 );
 
 export default function ClippedDrawer() {
   const classes = useStyles();
+  const history = useHistory();
+
+  const chatRooms = useSelector(
+    (state: AppState) => state.firestore.ordered.chatRooms
+  );
+
+  console.log("this are the chatRooms: ", chatRooms);
+
+  const navigateToRoom = (roomId: string) => {
+    history.push(`/chatRooms/${roomId}`);
+  };
 
   return (
-    <div className={classes.root}>
-      <Drawer
-        className={classes.drawer}
-        variant="permanent"
-        classes={{
-          paper: classes.drawerPaper,
-        }}
-      >
-        <Toolbar />
-        <div className={classes.drawerContainer}>
-          <List>
-            {["React", "Apple"].map((text, index) => (
-              <ListItem button key={text}>
-                <ListItemIcon>
-                  <Icon component={text === "React" ? FaReact : DiApple} />
-                </ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItem>
-            ))}
-          </List>
-        </div>
-      </Drawer>
-      <ChatList />
+    <div style={{ position: "sticky", top: 100 }}>
+      {isLoaded(chatRooms) && !isEmpty(chatRooms) ? (
+        <List>
+          {chatRooms.map((chatRoom: ChatRoom) => (
+            <ListItem
+              button
+              key={chatRoom.id}
+              onClick={() => navigateToRoom(chatRoom.id)}
+            >
+              <ListItemIcon>
+                <Icon
+                  component={chatRoom.title === "React" ? FaReact : DiApple}
+                />
+              </ListItemIcon>
+              <ListItemText primary={chatRoom.title} />
+            </ListItem>
+          ))}
+        </List>
+      ) : (
+        <CircularProgress />
+      )}
     </div>
   );
 }
