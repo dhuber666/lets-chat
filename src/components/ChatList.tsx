@@ -8,8 +8,11 @@ import ListItemText from "@material-ui/core/ListItemText";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import Avatar from "@material-ui/core/Avatar";
 import Typography from "@material-ui/core/Typography";
-import { Toolbar } from "@material-ui/core";
+import { Toolbar, CircularProgress } from "@material-ui/core";
 import NewChatInput from "./NewChatInput";
+import { useFirestoreConnect, isLoaded, isEmpty } from "react-redux-firebase";
+import { useSelector } from "react-redux";
+import { AppState, Chat } from "../reducers";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -59,16 +62,33 @@ const renderChat = (classes: Record<"inline" | "root", string>) => (
   </>
 );
 
-export default function AlignItemsList() {
+export default function ChatList() {
   const classes = useStyles();
 
-  const fakeArr = Array.from({ length: 100 });
+  // @ts-ignore
+  useFirestoreConnect({
+    collection: "chatRooms/89VzMHrNFHlXEl9uLRWT/chats",
+    storeAs: "chats",
+    orderBy: "timestamp",
+  });
+
+  const chats = useSelector((state: AppState) => state.firestore.ordered.chats);
+
+  console.log(chats);
 
   return (
     <div className={classes.root}>
       <Toolbar />
       <List className={classes.chatlist}>
-        {fakeArr.map((v) => renderChat(classes))}
+        {isLoaded && !isEmpty(chats) ? (
+          chats.map((chat: Chat) => (
+            <p key={chat.id}>
+              {chat.message} - {chat.sender.email}
+            </p>
+          ))
+        ) : (
+          <CircularProgress />
+        )}
       </List>
       <NewChatInput />
     </div>

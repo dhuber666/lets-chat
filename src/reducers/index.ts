@@ -16,11 +16,11 @@ export interface ChatRoom {
 }
 
 export interface Chat {
-  id: string;
+  id?: string;
   message: string;
   sender: User;
-  timestamp: Date;
-  chatRoom: ChatRoom;
+  timestamp: number;
+  chatRoom: string;
 }
 
 // create schema for the DB

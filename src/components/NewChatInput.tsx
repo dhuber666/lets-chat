@@ -1,11 +1,31 @@
 import React, { useState } from "react";
+import { useFirestore } from "react-redux-firebase";
+import { useSelector } from "react-redux";
+import { AppState, Chat } from "../reducers";
 
 const NewChatInput = () => {
+  const firestore = useFirestore();
+
+  const profile = useSelector((state: AppState) => state.firebase.profile);
+
   const [message, setMessage] = useState("");
+
+  const submitMessage = async () => {
+    setMessage("");
+
+    const newChat: Chat = {
+      message,
+      chatRoom: "89VzMHrNFHlXEl9uLRWT",
+      sender: profile,
+      timestamp: Date.now(),
+    };
+
+    firestore.add("chatRooms/89VzMHrNFHlXEl9uLRWT/chats", newChat);
+  };
 
   return (
     <input
-      onKeyDown={(e) => (e.keyCode === 13 ? console.log(message) : null)}
+      onKeyDown={(e) => (e.keyCode === 13 ? submitMessage() : null)}
       type="text"
       value={message}
       onChange={(e) => setMessage(e.target.value)}

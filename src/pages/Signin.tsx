@@ -13,8 +13,9 @@ import { Toolbar } from "@material-ui/core";
 import { useFirebase } from "react-redux-firebase";
 import { useSelector } from "react-redux";
 import { AppState } from "../reducers";
-import { FirebaseError } from "firebase";
-import { Link as RouterLink, useHistory, Redirect } from "react-router-dom";
+import useIsMounted from "ismounted";
+import { Link as RouterLink, useHistory } from "react-router-dom";
+import { CircularProgress } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -42,20 +43,37 @@ export default function SignIn() {
   const auth = useSelector((state: AppState) => state.firebase.auth);
   const history = useHistory();
 
+  // i need this to get rid of pending setState from firebase promise
+  const isMounted = useIsMounted();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
 
   const [error, setError] = useState("");
+
+  console.log("is mounted?", isMounted.current);
+
+  React.useEffect(() => {
+    if (!auth.isEmpty && auth.isLoaded) {
+      history.push("/");
+    } else {
+      setIsLoading(!auth.isLoaded);
+    }
+  }, [auth.isLoaded, auth.isEmpty, history]);
 
   const signin = async (e: React.MouseEvent) => {
     e.preventDefault();
 
-    const user = await firebase
-      .login({ email, password })
-      .catch((e: FirebaseError) => setError(e.message));
-
-    if (user) {
-      history.push("/");
+    setIsLoading(true);
+    try {
+      const user = await firebase.login({ email, password });
+      isMounted.current && setIsLoading(false);
+      if (user) {
+        history.push("/");
+      }
+    } catch (error) {
+      setIsLoading(false);
+      setError(error.message);
     }
   };
 
@@ -68,68 +86,76 @@ export default function SignIn() {
       <CssBaseline />
       <div className={classes.paper}>
         <Toolbar />
-        <Avatar className={classes.avatar}>
-          <LockOutlinedIcon />
-        </Avatar>
-        <Typography component="h1" variant="h5">
-          Sign In
-        </Typography>
-        <form className={classes.form} noValidate>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="email"
-            label="Email Address"
-            name="email"
-            autoComplete="email"
-            autoFocus
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            name="password"
-            label="Password"
-            type="password"
-            id="password"
-            autoComplete="current-password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-
-          {error.length > 0 && (
-            <Typography variant="caption" color="secondary">
-              {error}
+        {!isLoading ? (
+          <>
+            <Avatar className={classes.avatar}>
+              <LockOutlinedIcon />
+            </Avatar>
+            <Typography component="h1" variant="h5">
+              Sign In
             </Typography>
-          )}
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            className={classes.submit}
-            onClick={signin}
-          >
-            Sign In
-          </Button>
-          <Grid container>
-            <Grid item xs>
-              <Link href="#" variant="body2" onClick={forgotPwd}>
-                Forgot password?
-              </Link>
-            </Grid>
-            <Grid item>
-              <Link component={RouterLink} to="/signup" variant="body2">
-                {"Don't have an account? Sign Up"}
-              </Link>
-            </Grid>
-          </Grid>
-        </form>
+            <form className={classes.form} noValidate>
+              <TextField
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                id="email"
+                label="Email Address"
+                name="email"
+                autoComplete="email"
+                autoFocus
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+              <TextField
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                name="password"
+                label="Password"
+                type="password"
+                id="password"
+                autoComplete="current-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+
+              {error.length > 0 && (
+                <Typography variant="caption" color="secondary">
+                  {error}
+                </Typography>
+              )}
+
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                color="primary"
+                className={classes.submit}
+                onClick={signin}
+              >
+                Sign In
+              </Button>
+
+              <Grid container>
+                <Grid item xs>
+                  <Link href="#" variant="body2" onClick={forgotPwd}>
+                    Forgot password?
+                  </Link>
+                </Grid>
+                <Grid item>
+                  <Link component={RouterLink} to="/signup" variant="body2">
+                    {"Don't have an account? Sign Up"}
+                  </Link>
+                </Grid>
+              </Grid>
+            </form>
+          </>
+        ) : (
+          <CircularProgress />
+        )}
       </div>
     </Container>
   );
