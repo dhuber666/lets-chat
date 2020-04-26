@@ -31,7 +31,7 @@ function Home() {
   }
 
   return (
-    <div style={{ marginTop: 100 }}>
+    <div>
       <ChatRoomList />
     </div>
   );

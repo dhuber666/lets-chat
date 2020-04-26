@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import { useFirestore } from "react-redux-firebase";
 import { useSelector } from "react-redux";
 import { AppState, Chat } from "../reducers";

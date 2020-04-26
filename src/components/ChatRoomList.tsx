@@ -1,7 +1,4 @@
 import React from "react";
-import { createStyles, Theme, makeStyles } from "@material-ui/core/styles";
-import Drawer from "@material-ui/core/Drawer";
-import Toolbar from "@material-ui/core/Toolbar";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
@@ -15,21 +12,7 @@ import { useSelector } from "react-redux";
 import { AppState, ChatRoom } from "../reducers";
 import { isEmpty, isLoaded } from "react-redux-firebase";
 
-const drawerWidth = 240;
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      width: drawerWidth,
-      left: 0,
-      top: 0,
-      backgroundColor: "teal",
-    },
-  })
-);
-
 export default function ClippedDrawer() {
-  const classes = useStyles();
   const history = useHistory();
 
   const chatRooms = useSelector(
@@ -43,7 +26,7 @@ export default function ClippedDrawer() {
   };
 
   return (
-    <div style={{ position: "sticky", top: 100 }}>
+    <div style={{ position: "sticky", top: 0 }}>
       {isLoaded(chatRooms) && !isEmpty(chatRooms) ? (
         <List>
           {chatRooms.map((chatRoom: ChatRoom) => (
