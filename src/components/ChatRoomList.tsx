@@ -10,16 +10,15 @@ import { Icon, CircularProgress } from "@material-ui/core";
 import { useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { AppState, ChatRoom } from "../reducers";
-import { isEmpty, isLoaded } from "react-redux-firebase";
+import { isLoaded, useFirestoreConnect } from "react-redux-firebase";
 
 export default function ClippedDrawer() {
   const history = useHistory();
+  useFirestoreConnect("chatRooms");
 
   const chatRooms = useSelector(
     (state: AppState) => state.firestore.ordered.chatRooms
   );
-
-  console.log("this are the chatRooms: ", chatRooms);
 
   const navigateToRoom = (roomId: string) => {
     history.push(`/chatRooms/${roomId}`);
@@ -27,7 +26,7 @@ export default function ClippedDrawer() {
 
   return (
     <div>
-      {isLoaded(chatRooms) && !isEmpty(chatRooms) ? (
+      {isLoaded(chatRooms) ? (
         <List>
           {chatRooms.map((chatRoom: ChatRoom) => (
             <ListItem

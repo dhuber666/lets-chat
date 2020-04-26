@@ -1,18 +1,16 @@
 import React, { useState } from "react";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
-import CssBaseline from "@material-ui/core/CssBaseline";
+
 import TextField from "@material-ui/core/TextField";
 import Link from "@material-ui/core/Link";
 import Grid from "@material-ui/core/Grid";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
-import Container from "@material-ui/core/Container";
+
 import { Toolbar } from "@material-ui/core";
 import { useFirebase } from "react-redux-firebase";
-import { useSelector } from "react-redux";
-import { AppState } from "../reducers";
 import { FirebaseError } from "firebase";
 import { Link as RouterLink, useHistory } from "react-router-dom";
 
@@ -39,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
 export default function SignUp() {
   const classes = useStyles();
   const firebase = useFirebase();
-  const auth = useSelector((state: AppState) => state.firebase.auth);
+
   const history = useHistory();
 
   const [email, setEmail] = useState("");
@@ -54,7 +52,7 @@ export default function SignUp() {
       return setError("Passwords doesn't match");
     }
 
-    const user = await firebase
+    firebase
       .createUser({ email, password })
       .then((user) => history.push("/"))
       .catch((e: FirebaseError) => setError(e.message));
@@ -63,80 +61,76 @@ export default function SignUp() {
   };
 
   return (
-    <Container component="main" maxWidth="xs">
-      <CssBaseline />
-      <div className={classes.paper}>
-        <Toolbar />
-        <Avatar className={classes.avatar}>
-          <LockOutlinedIcon />
-        </Avatar>
-        <Typography component="h1" variant="h5">
+    <div id="signin">
+      <Avatar className={classes.avatar}>
+        <LockOutlinedIcon />
+      </Avatar>
+      <Typography component="h1" variant="h5">
+        Sign Up
+      </Typography>
+      <form className={classes.form} noValidate>
+        <TextField
+          variant="outlined"
+          margin="normal"
+          required
+          fullWidth
+          id="email"
+          label="Email Address"
+          name="email"
+          autoComplete="email"
+          autoFocus
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <TextField
+          variant="outlined"
+          margin="normal"
+          required
+          fullWidth
+          name="password"
+          label="Password"
+          type="password"
+          id="password"
+          autoComplete="current-password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <TextField
+          variant="outlined"
+          margin="normal"
+          required
+          fullWidth
+          name="password"
+          label="Repeat Password"
+          type="password"
+          id="password2"
+          autoComplete="current-password"
+          value={repeatPassword}
+          onChange={(e) => setRepeatPassword(e.target.value)}
+        />
+        {error.length > 0 && (
+          <Typography variant="caption" color="secondary">
+            {error}
+          </Typography>
+        )}
+        <Button
+          type="submit"
+          fullWidth
+          variant="contained"
+          color="primary"
+          className={classes.submit}
+          onClick={signup}
+        >
           Sign In
-        </Typography>
-        <form className={classes.form} noValidate>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="email"
-            label="Email Address"
-            name="email"
-            autoComplete="email"
-            autoFocus
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            name="password"
-            label="Password"
-            type="password"
-            id="password"
-            autoComplete="current-password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            name="password"
-            label="Repeat Password"
-            type="password"
-            id="password2"
-            autoComplete="current-password"
-            value={repeatPassword}
-            onChange={(e) => setRepeatPassword(e.target.value)}
-          />
-          {error.length > 0 && (
-            <Typography variant="caption" color="secondary">
-              {error}
-            </Typography>
-          )}
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            className={classes.submit}
-            onClick={signup}
-          >
-            Sign In
-          </Button>
-          <Grid container justify="center">
-            <Grid item>
-              <Link component={RouterLink} to="/signin" variant="body2">
-                {"Already have an account? Sign In"}
-              </Link>
-            </Grid>
+        </Button>
+        <Grid container justify="center">
+          <Grid item>
+            <Link component={RouterLink} to="/signin" variant="body2">
+              {"Already have an account? Sign In"}
+            </Link>
           </Grid>
-        </form>
-      </div>
-    </Container>
+        </Grid>
+      </form>
+    </div>
   );
 }

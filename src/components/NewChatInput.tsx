@@ -34,7 +34,7 @@ const NewChatInput = () => {
         placeholder="Your Message.."
         style={{ backgroundColor: "white" }}
         variant="outlined"
-        label="message"
+        label="Your Message.."
         fullWidth
         InputLabelProps={{ style: { backgroundColor: "white" } }}
         color="secondary"

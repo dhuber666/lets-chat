@@ -2,6 +2,7 @@ import React from "react";
 import { Route, Redirect } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { AppState } from "../reducers";
+import { CircularProgress } from "@material-ui/core";
 
 interface Props {
   exact: boolean;
@@ -20,7 +21,7 @@ const PrivateRoute = ({ children, ...rest }: Props) => {
         <Redirect to={{ pathname: "/signin", state: { from: location } }} />
       );
     } else if (auth.isEmpty && !auth.isLoaded) {
-      return <h2>Loading...</h2>;
+      return <CircularProgress />;
     } else {
       return children;
     }
