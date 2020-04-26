@@ -21,7 +21,7 @@ import Navbar from "./components/Navbar";
 import PrivateRoute from "./pages/PrivateRoute";
 import ChatList from "./components/ChatList";
 import ChatRoomList from "./components/ChatRoomList";
-import { Grid } from "@material-ui/core";
+import NewChatInput from "./components/NewChatInput";
 
 // Initialize Firebase instance
 firebase.initializeApp(fbConfig);
@@ -29,14 +29,15 @@ firebase.initializeApp(fbConfig);
 firebase.firestore();
 
 const ListAndChat = () => (
-  <Grid container direction="row">
-    <Grid item md={2}>
+  <>
+    <aside>
       <ChatRoomList />
-    </Grid>
-    <Grid item md={10}>
+    </aside>
+    <main>
       <ChatList />
-    </Grid>
-  </Grid>
+    </main>
+    <NewChatInput />
+  </>
 );
 
 export default () => (

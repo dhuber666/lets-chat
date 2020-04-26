@@ -29,18 +29,13 @@ const NewChatInput = () => {
   };
 
   return (
-    <div
-      style={{
-        position: "sticky",
-        bottom: 5,
-      }}
-    >
+    <div id="newmessage">
       <TextField
         placeholder="Your Message.."
         style={{ backgroundColor: "white" }}
         variant="outlined"
-        fullWidth
         label="message"
+        fullWidth
         InputLabelProps={{ style: { backgroundColor: "white" } }}
         color="secondary"
         value={message}

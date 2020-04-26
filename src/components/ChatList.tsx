@@ -38,14 +38,7 @@ export default function ChatList() {
   }
 
   return (
-    <div
-      style={{
-        height: "100%",
-
-        width: "100%",
-        scrollBehavior: "smooth",
-      }}
-    >
+    <div>
       <List>
         {isLoaded ? (
           chats.map((chat: Chat) => (
@@ -58,8 +51,6 @@ export default function ChatList() {
         )}
       </List>
       <div ref={chatRef} />
-
-      <NewChatInput />
     </div>
   );
 }

@@ -26,7 +26,7 @@ export default function ClippedDrawer() {
   };
 
   return (
-    <div style={{ position: "sticky", top: 0 }}>
+    <div>
       {isLoaded(chatRooms) && !isEmpty(chatRooms) ? (
         <List>
           {chatRooms.map((chatRoom: ChatRoom) => (

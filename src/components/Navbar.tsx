@@ -58,24 +58,26 @@ export default function ClippedDrawer() {
   const auth = useSelector((state: AppState) => state.firebase.auth);
 
   return (
-    <AppBar className={classes.appBar} position="sticky">
-      <Toolbar>
-        <IconButton
-          edge="start"
-          color="inherit"
-          aria-label="menu"
-          className={classes.menuButton}
-          component={Link}
-          to="/"
-        >
-          <HomeIcon />
-        </IconButton>
-        <Typography variant="h6" className={classes.title}>
-          Simple Chat
-        </Typography>
+    <header>
+      <AppBar>
+        <Toolbar>
+          <IconButton
+            edge="start"
+            color="inherit"
+            aria-label="menu"
+            className={classes.menuButton}
+            component={Link}
+            to="/"
+          >
+            <HomeIcon />
+          </IconButton>
+          <Typography variant="h6" className={classes.title}>
+            Simple Chat
+          </Typography>
 
-        {auth.isLoaded ? !auth.isEmpty ? <Logout /> : <Login /> : ""}
-      </Toolbar>
-    </AppBar>
+          {auth.isLoaded ? !auth.isEmpty ? <Logout /> : <Login /> : ""}
+        </Toolbar>
+      </AppBar>
+    </header>
   );
 }
